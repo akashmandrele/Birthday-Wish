@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You ❤️</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:Georgia,"Times New Roman",serif;background:#f8edef;color:#553840}
+.page{position:fixed;inset:0;width:100%;height:100vh;display:none;overflow-y:auto}
+.page.active{display:block;animation:pageIn .8s ease}
+@keyframes pageIn{from{opacity:0;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}
+#page1{background:#f5e8eb;align-items:center;justify-content:center;text-align:center}
+#page1.active{display:flex}
+.login-box{width:min(90%,420px);padding:40px 30px}
+.login-heart{font-size:58px;color:#a66d7b;margin-bottom:20px;animation:heartbeat 1.5s infinite}
+@keyframes heartbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+.login-box h1{font-size:28px;font-weight:normal;letter-spacing:1px}
+.login-box p{margin-top:12px;margin-bottom:28px;font-size:14px;color:#96777e}
+.password{width:100%;height:55px;border:1px solid #d5bbc2;border-radius:15px;background:rgba(255,255,255,.55);outline:none;text-align:center;font-size:24px;letter-spacing:12px;color:#5b3d46}
+.password:focus{border-color:#a66d7b;box-shadow:0 0 20px rgba(166,109,123,.18)}
+.enter-btn,.next-btn{margin-top:20px;border:none;padding:13px 34px;border-radius:30px;background:#9c6876;color:white;font-size:15px;cursor:pointer;transition:.3s}
+.enter-btn:hover,.next-btn:hover{background:#7f5260;transform:translateY(-2px)}
+.error{min-height:20px;margin-top:15px;font-size:13px;color:#b64f65}
+.music-control{position:fixed;right:18px;bottom:18px;width:48px;height:48px;border-radius:50%;border:1px solid rgba(156,104,118,.25);background:rgba(255,255,255,.85);color:#8e5e6b;cursor:pointer;z-index:1000;font-size:19px;box-shadow:0 6px 20px rgba(70,40,50,.12);display:none}
+.music-control.visible{display:block}
+#page2{background:#f9eef1;padding:45px 20px 90px}
+.section-title{text-align:center;margin-bottom:32px}
+.section-title .mini{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#9c6876}
+.section-title h1{margin-top:7px;font-size:43px;font-weight:normal}
+.section-title p{margin-top:8px;font-size:14px;color:#92747c}
+.memory-grid{width:min(900px,100%);margin:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.memory{position:relative;height:245px;overflow:hidden;border-radius:18px;background:#ead7dc;box-shadow:0 8px 25px rgba(80,45,55,.12);transition:.4s}
+.memory:hover{transform:translateY(-7px) rotate(1deg)}
+.memory img{width:100%;height:100%;object-fit:cover;transition:.5s}
+.memory:hover img{transform:scale(1.06)}
+.placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#9c737d;font-size:14px;letter-spacing:1px}
+.next-btn{display:block;margin:35px auto 0}
+#page3{background:#f5e8eb;text-align:center;padding:45px 20px 80px}
+.final-content{width:min(680px,100%);margin:auto}
+.final-heart{font-size:32px;color:#a66d7b;margin-bottom:12px}
+.final-content h1{font-size:40px;font-weight:normal;margin-bottom:25px}
+.main-photo{width:min(90%,430px);height:430px;margin:auto;overflow:hidden;border-radius:22px;background:#e6cfd5;box-shadow:0 15px 40px rgba(75,42,52,.18)}
+.main-photo img{width:100%;height:100%;object-fit:cover}
+.message{margin:30px auto 0;max-width:620px;font-size:17px;line-height:1.9;color:#684952}
+.signature{margin-top:25px;font-size:18px;color:#9c6876}
+.heart-float{position:fixed;bottom:-40px;pointer-events:none;z-index:2;opacity:0;color:#b57c89;animation:floatHeart linear forwards}
+@keyframes floatHeart{0%{transform:translateY(0) rotate(0);opacity:0}15%{opacity:.6}100%{transform:translateY(-110vh) rotate(360deg);opacity:0}}
+@media(max-width:700px){#page2{padding:35px 12px 90px}.section-title h1{font-size:35px}.memory-grid{grid-template-columns:repeat(2,1fr);gap:12px}.memory{height:180px}.final-content h1{font-size:32px}.main-photo{height:360px}.message{font-size:15px;line-height:1.8}}
+@media(max-width:400px){.memory{height:160px}.login-box h1{font-size:24px}}
+</style>
+</head>
+<body>
+
+<audio id="music" loop preload="auto">
+  <source src="./aarzu.mp3" type="audio/mpeg">
+</audio>
+
+<button id="musicButton" class="music-control" onclick="toggleMusic()" aria-label="Music control">▶</button>
+
+<section id="page1" class="page active">
+  <div class="login-box">
+    <div class="login-heart">♡</div>
+    <h1>Enter our secret number</h1>
+    <p>A little secret, just between us...</p>
+    <input id="password" class="password" type="password" maxlength="4" inputmode="numeric" placeholder="••••">
+    <button class="enter-btn" onclick="checkPassword()">Enter ❤️</button>
+    <div id="error" class="error"></div>
+  </div>
+</section>
+
+<section id="page2" class="page">
+  <div class="section-title">
+    <div class="mini">A little collection of us</div>
+    <h1>Memories ♡</h1>
+    <p>Some moments are too beautiful to forget.</p>
+  </div>
+
+  <div class="memory-grid">
+    <div class="memory"><img src="photo1.jpg" alt="Memory 1" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">PHOTO 1</div></div>
+    <div class="memory"><img src="photo2.jpg" alt="Memory 2" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">PHOTO 2</div></div>
+    <div class="memory"><img src="photo3.jpg" alt="Memory 3" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">PHOTO 3</div></div>
+    <div class="memory"><img src="photo4.jpg" alt="Memory 4" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">PHOTO 4</div></div>
+    <div class="memory"><img src="photo5.jpg" alt="Memory 5" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">PHOTO 5</div></div>
+    <div class="memory"><img src="photo6.jpg" alt="Memory 6" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="placeholder" style="display:none">PHOTO 6</div></div>
+  </div>
+
+  <button class="next-btn" onclick="showPage(3)">One more thing... ♡</button>
+</section>
+
+<section id="page3" class="page">
+  <div class="final-content">
+    <div class="final-heart">♡</div>
+    <h1>Happy Birthday, My Love ❤️</h1>
+
+    <div class="main-photo">
+      <img src="birthday-photo.jpg" alt="Our Special Photo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="placeholder" style="display:none">YOUR SPECIAL PHOTO</div>
+    </div>
+
+    <div class="message">
+      Happy Birthday, my love ❤️<br><br>
+      Itne saalon se tum meri life ka ek itna khoobsurat hissa ho ki ab tumhare bina apni life imagine karna bhi mushkil lagta hai.
+      Humne saath mein itne saare moments dekhe hain — khushiyan, choti-choti fights, hasi, pagalpan aur woh countless memories jo sirf hum dono samajh sakte hain. ❤️<br><br>
+      Waqt badalta raha, hum badalte rahe, lekin ek cheez hamesha same rahi — tum mere liye kitni special ho.
+      Thank you meri life mein aane ke liye, mujhe samajhne ke liye aur itne saare beautiful moments mere saath share karne ke liye.<br><br>
+      Aaj tumhare birthday par bas itna chahta hoon ki tum hamesha khush raho, tumhari har wish poori ho, aur chahe kitne bhi saal guzar jaayein, hum aise hi ek dusre ka haath pakad kar saath chalte rahein.<br><br>
+      Happy Birthday to the girl who became one of the most beautiful parts of my life. ❤️<br><br>
+      I love you, today, tomorrow, and through all the years that are yet to come. ♾️❤️
+    </div>
+
+    <div class="signature">With all my love, always. ♡</div>
+  </div>
+</section>
+
+<script>
+const music=document.getElementById("music");
+const musicButton=document.getElementById("musicButton");
+const password=document.getElementById("password");
+const error=document.getElementById("error");
+
+function checkPassword(){
+  if(password.value==="1909"){
+    error.innerHTML="";
+    showPage(2);
+    music.volume=.5;
+    music.play().then(()=>{
+      musicButton.classList.add("visible");
+      musicButton.innerHTML="♫";
+    }).catch(()=>{
+      musicButton.classList.add("visible");
+      musicButton.innerHTML="▶";
+    });
+  }else{
+    error.innerHTML="Hmm... secret number galat hai ❤️";
+    password.value="";
+    password.focus();
+  }
+}
+
+password.addEventListener("keydown",e=>{
+  if(e.key==="Enter") checkPassword();
+});
+
+function showPage(number){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  const next=document.getElementById("page"+number);
+  next.classList.add("active");
+  next.scrollTop=0;
+}
+
+function toggleMusic(){
+  if(music.paused){
+    music.play();
+    musicButton.innerHTML="♫";
+  }else{
+    music.pause();
+    musicButton.innerHTML="▶";
+  }
+}
+
+function createHeart(){
+  const heart=document.createElement("div");
+  heart.className="heart-float";
+  heart.innerHTML=Math.random()>.5?"♡":"♥";
+  heart.style.left=Math.random()*100+"vw";
+  heart.style.fontSize=(12+Math.random()*18)+"px";
+  heart.style.animationDuration=(5+Math.random()*5)+"s";
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),11000);
+}
+setInterval(createHeart,900);
+</script>
+</body>
+</html>
